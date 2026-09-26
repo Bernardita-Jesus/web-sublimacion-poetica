@@ -788,6 +788,11 @@
   }
   #weekBtns button{
     position:relative;
+    /* z-index:0 (junto con position:relative) hace que el botón sea su propio
+       contexto de apilamiento -- si no, el z-index:-1 del ::before "escapaba"
+       hacia #weekBtns (que sí tiene z-index) y quedaba pintado DEBAJO del
+       fondo del botón, viéndose apenas un gris apagado en vez de azul. */
+    z-index:0;
     overflow:hidden;
     pointer-events:auto;
     font-family:'Inter',sans-serif;
@@ -810,7 +815,7 @@
     position:absolute;
     top:0; bottom:0; left:0;
     width:var(--fill, 0%);
-    background:#2f6083;
+    background:#1f5277;
     z-index:-1;
     transition:width .1s linear;
   }
@@ -1869,13 +1874,16 @@ new p5((p)=>{
       } else {
         if(!renderState.branchStartTime) renderState.branchStartTime = now;
         const frac = p.constrain((now - renderState.branchStartTime) / BRANCH_DURATION, 0, 1);
-        const slotsReached = Math.floor(frac * 21 + 1e-6); // 3 semanas x 7 días
+        const slotsReached = Math.floor(frac * 21 + 1e-6); // 3 semanas x 7 días (gatilla qué ramas ya aparecieron)
         renderReached = (e)=>{
           if(frac >= 1) return true;
           return (((e.week || 1) - 1) * 7 + e.day) < slotsReached;
         };
+        // relleno del botón: continuo (no a saltos de a 1/7), para que avance
+        // fluido con el tiempo en vez de "escalón por día".
+        const weekFloat = frac * 3; // 0..3
         for(let b = 0; b < 3; b++){
-          weekFill[b] = p.constrain((slotsReached - b * 7) / 7, 0, 1);
+          weekFill[b] = p.constrain(weekFloat - b, 0, 1);
         }
       }
     }

@@ -17,15 +17,31 @@
   *{box-sizing:border-box;}
   html,body{
     margin:0; padding:0;
-    height:100vh; overflow:hidden;
     background:var(--bg); color:var(--text);
     font-family:'Inter',sans-serif;
   }
-  body{ display:flex; flex-direction:column; height:100vh; }
+  /* body ya no es el layout en sí: es el "marco" a pantalla completa que
+     centra #stage, un diseño de tamaño FIJO (1440x900 -- las posiciones y
+     distancias ya aprobadas, tal cual quedaron). #stage se escala SÓLO según
+     el ancho disponible (ver JS fitStage), nunca según el alto: así, en el
+     uso normal (ventana con pestañas/barras que restan alto pero no ancho),
+     nunca se achica -- si el alto no alcanza igual, aparece scroll vertical
+     en vez de encoger todo. Si sobra espacio, se agrega fondo (mismo color
+     de la página) en vez de reacomodar o deformar nada. */
+  body{
+    width:100vw; min-height:100vh; overflow-x:hidden; overflow-y:auto;
+    display:flex; align-items:center; justify-content:center;
+  }
+  #stage{
+    position:relative;
+    width:1440px; height:900px;
+    flex-shrink:0;
+    display:flex; flex-direction:column;
+  }
   /* formato web horizontal: 3 columnas lado a lado en vez de header+layout
      apilados (eso es el formato cuadrado, que oculta header/.layout enteros
      y usa su propio #squareStage) */
-  body:not(.square-mode){ flex-direction:row; }
+  body:not(.square-mode) #stage{ flex-direction:row; }
 
   /* =====================================================================
      MAPA DE LA PÁGINA  (nombres para entendernos)
@@ -566,9 +582,11 @@
   }
   #canvas-holder canvas{ display:block; }
   #formatBtn{
-    position:fixed;
+    /* absolute (no fixed) relativo a #stage: así queda en el mismo lugar del
+       diseño de 1440x900 sin importar cómo #stage se escale (ver JS fitStage). */
+    position:absolute;
     right:16px;
-    bottom:26px;
+    bottom:85px;
     width:38px;
     height:38px;
     padding:0;
@@ -583,7 +601,7 @@
   }
   #formatBtn svg{ display:block; }
   /* sólo en horizontal: separado más del borde derecho */
-  body:not(.square-mode) #formatBtn{ right:48px; bottom:30px; }
+  body:not(.square-mode) #formatBtn{ right:48px; bottom:100px; }
   #formatBtn:hover{ background:#e9e0c9; }
   #formatBtn.active{
     background:#2b2620;
@@ -594,7 +612,7 @@
   /* "Volver al inicio": fijo arriba a la derecha, fuera del cuadrado. Sólo
      visible dentro de una visualización (pantalla viz del cuadrado). */
   #homeBtn{
-    position:fixed;
+    position:absolute;
     top:16px;
     right:16px;
     z-index:60;
@@ -627,7 +645,7 @@
      markup duplicado.
      ===================================================================== */
   body.square-mode header,
-  body.square-mode > .layout{ display:none; }
+  body.square-mode .layout{ display:none; }
 
   .square-stage{
     display:none;
@@ -846,11 +864,11 @@
 
   /* un poco más arriba que el default (8px), para que no queden pegados al
      borde de abajo ahora que el árbol quedó un poco más bajo (ver computeLayout) */
-  body:not(.square-mode) #weekBtns{ bottom:34px; }
+  body:not(.square-mode) #weekBtns{ bottom:94px; }
   /* en cuadrado el árbol llega más abajo que en web -- casi no queda aire
      debajo de la línea de las 07:00, así que acá van más cerca del borde
      (si no, quedan pisando el tronco/las ramas de esa hora) */
-  body.square-viz #weekBtns{ bottom:9px; }
+  body.square-viz #weekBtns{ bottom:41px; }
 
   /* ---- formato cuadrado: textos, íconos y botones un poco más chicos que
      en el formato web (solo afecta a body.square-mode / body.square-viz) ---- */
@@ -929,6 +947,10 @@
 </style>
 </head>
 <body>
+<!-- #stage: lienzo de tamaño fijo (1440x900) que se escala según el ancho
+     real (ver JS fitStage) -- así las posiciones y distancias ya aprobadas
+     quedan bloqueadas, sin importar el monitor o el tamaño de ventana. -->
+<div id="stage">
 
 <!-- 1) PANEL IZQUIERDO: título + bajada + controles + "Color según el día"
      (ver MAPA DE LA PÁGINA en <style>). .day-group viaja a #symbolLegend en
@@ -1093,7 +1115,26 @@
      fuera del cuadrado). Sólo aparece cuando ya se entró a una visualización. -->
 <button id="homeBtn" type="button" title="Volver al inicio" aria-label="Volver al inicio">↩ Inicio</button>
 
+</div><!-- /#stage -->
+
 <script>
+/* #stage es un lienzo de tamaño fijo (1440x900) con las posiciones y
+   distancias ya aprobadas: esto lo escala SÓLO según el ancho disponible
+   (nunca según el alto), para que en el uso normal -- ventana con pestañas y
+   barras que restan alto pero no ancho -- nunca se achique. Si el alto no
+   alcanza igual, aparece scroll vertical en vez de encoger todo; si sobra
+   espacio (ancho o alto), se agrega fondo del mismo color de la página. */
+(function(){
+  const stageEl = document.getElementById("stage");
+  const STAGE_W = 1440;
+  function fitStage(){
+    const scale = window.innerWidth / STAGE_W;
+    stageEl.style.transform = "scale(" + scale + ")";
+  }
+  fitStage();
+  window.addEventListener("resize", fitStage);
+})();
+
 /* ---------------------------------------------------------------
    DATOS
    Cada pulsión es un objeto con esta forma:
@@ -1579,18 +1620,19 @@ new p5((p)=>{
       // la columna, así la grilla no se mueve.
       const legendRect = symbolLegendEl.getBoundingClientRect();
       const gridShiftDown = 94; // baja la grilla completa manteniendo la distancia entre líneas
-      const rowSpacingTighten = 62; // sube plotBottom para juntar un poco las líneas de las horas (23:00 queda fijo) -- un poco más que antes para que el árbol quede levemente más bajo
+      const rowSpacingTighten = 95; // sube plotBottom para juntar un poco las líneas de las horas (23:00 queda fijo) -- un poco más que antes para que el árbol quede levemente más bajo
+      const topSpacingTighten = 20; // baja SÓLO la línea de arriba (23:00) para juntar las horas -- plotBottom (07:00) no se toca, ya quedó bien
       // el Math.max evita que la primera línea (23:00) se meta debajo de la
       // franja de título + pregunta / quede cortada arriba.
-      plotTop = Math.max(34, legendRect.top + 23 - canvasRect.top - 44 + gridShiftDown);
+      plotTop = Math.max(34, legendRect.top + 23 - canvasRect.top - 44 + gridShiftDown + topSpacingTighten);
       plotBottom += gridShiftDown - rowSpacingTighten;
       weekLabelY = p.height - 8;
     } else {
       // plotTop NO se toca (el árbol no se mueve hacia abajo): se achica
       // sólo subiendo plotBottom, dejando más aire para los botones de
       // semana debajo del todo
-      plotTop = 50;
-      plotBottom -= 32;
+      plotTop = 70;
+      plotBottom -= 85;
       weekLabelY = plotBottom + 24;
     }
     plotLeft = Math.max(96, p.width * 0.1);

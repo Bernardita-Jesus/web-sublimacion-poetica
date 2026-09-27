@@ -159,7 +159,7 @@
   body.square-viz #renderBtn{
     display:inline-block;
     align-self:flex-start;
-    margin-top:22px;
+    margin-top:28px;
     padding:9px 18px;
     font-size:12px;
   }
@@ -169,10 +169,19 @@
   body.square-viz #renderCredits{
     display:block;
     align-self:flex-start;
-    margin:26px 0 0;
-    font-size:9.5px;
-    line-height:1.5;
+    margin:18px 0 0;
+    font-size:10px;
+    line-height:1.35;
     color:var(--muted);
+  }
+  /* "De:"/"Para:" con el mismo tratamiento que las etiquetas del pie en
+     formato web (mayúsculas, negrita, chicas) -- ver body:not(.square-mode)
+     #legendSubtitle/#legendAuthorLabel */
+  body.square-viz #renderCredits strong{
+    font-weight:600;
+    font-size:9px;
+    letter-spacing:0.4px;
+    text-transform:uppercase;
   }
   body.square-mode:not(.square-viz) #renderCredits{
     display:block;
@@ -228,7 +237,7 @@
     content:"";
     position:absolute;
     top:0;
-    bottom:0;
+    bottom:65px;
     left:28px;
     width:1px;
     background:var(--border);
@@ -241,7 +250,7 @@
     content:"";
     position:absolute;
     top:0;
-    bottom:0;
+    bottom:65px;
     right:389px;
     width:1px;
     background:var(--border);
@@ -336,9 +345,11 @@
     gap:13px;
   }
   body:not(.square-mode) .symbol-rows{ gap:24px; }
-  /* baja las 4 filas de simbología respecto al h2 "Cómo leer las ramas" */
+  /* "Cómo leer las ramas" eliminado en cuadrado: su tamaño (14px) pasa a los
+     4 títulos de fila (Presencia del registro, Estímulo sensorial, etc, ver
+     body.square-mode .row-title) en vez de tener un título propio arriba */
   body.square-mode #symbolLegend h2{
-    margin-bottom:52px;
+    display:none;
   }
   /* cada fila: título arriba, y debajo las dos opciones, cada una como
      [símbolo dibujado clickeable] + [su texto al lado] */
@@ -585,8 +596,8 @@
     /* absolute (no fixed) relativo a #stage: así queda en el mismo lugar del
        diseño de 1440x900 sin importar cómo #stage se escale (ver JS fitStage). */
     position:absolute;
-    right:16px;
-    bottom:85px;
+    right:48px;
+    bottom:100px;
     width:38px;
     height:38px;
     padding:0;
@@ -600,8 +611,6 @@
     cursor:pointer;
   }
   #formatBtn svg{ display:block; }
-  /* sólo en horizontal: separado más del borde derecho */
-  body:not(.square-mode) #formatBtn{ right:48px; bottom:100px; }
   #formatBtn:hover{ background:#e9e0c9; }
   #formatBtn.active{
     background:#2b2620;
@@ -609,26 +618,6 @@
     border-color:#2b2620;
   }
 
-  /* "Volver al inicio": fijo arriba a la derecha, fuera del cuadrado. Sólo
-     visible dentro de una visualización (pantalla viz del cuadrado). */
-  #homeBtn{
-    position:absolute;
-    top:16px;
-    right:16px;
-    z-index:60;
-    display:none;
-    padding:8px 16px;
-    font-family:'Inter',sans-serif;
-    font-size:12px;
-    background:rgba(248,244,234,.97);
-    color:var(--text);
-    border:1px solid var(--border);
-    border-radius:13px;
-    box-shadow:0 4px 14px rgba(43,38,32,.10);
-    cursor:pointer;
-  }
-  #homeBtn:hover{ background:#f1e9d5; }
-  body.square-viz #homeBtn{ display:block; }
 
   /* =====================================================================
      MODO CUADRADO (alternativa completa de página, activada por #formatBtn)
@@ -677,6 +666,8 @@
     height:760px;
     flex-shrink:0;
     aspect-ratio:1 / 1;
+    /* sube el cuadrado un poco respecto al centrado vertical por default */
+    transform:translateY(-34px);
   }
 
   .sq-landing{
@@ -868,7 +859,7 @@
   /* en cuadrado el árbol llega más abajo que en web -- casi no queda aire
      debajo de la línea de las 07:00, así que acá van más cerca del borde
      (si no, quedan pisando el tronco/las ramas de esa hora) */
-  body.square-viz #weekBtns{ bottom:41px; }
+  body.square-viz #weekBtns{ bottom:0px; }
 
   /* ---- formato cuadrado: textos, íconos y botones un poco más chicos que
      en el formato web (solo afecta a body.square-mode / body.square-viz) ---- */
@@ -894,7 +885,7 @@
   /* misma distancia título->datos (16px) para "Sentimiento evocado" y
      "Magnitud de la pulsión" que la que ya tienen "Presencia del registro"
      y "Estímulo sensorial" */
-  body.square-mode .row-title{ font-size:10.5px; margin:0 0 16px; }
+  body.square-mode .row-title{ font-size:14px; margin:0 0 16px; }
 
   body.square-mode #dayLegend{ gap:4px; }
   body.square-mode #dayLegend .day-row{ padding:3px 5px; font-size:9.5px; gap:8px; }
@@ -943,7 +934,6 @@
     color:var(--muted);
     border-color:var(--border);
   }
-  body.square-mode #formatBtn{ width:30px; height:30px; }
 </style>
 </head>
 <body>
@@ -962,7 +952,7 @@
     <button id="renderBtn">Renderizar crecimiento</button>
     <!-- créditos: viajan junto a #renderBtn (ver toSquareMode/toRectMode);
          sólo visibles en la pantalla viz cuadrada, debajo del botón -->
-    <p id="renderCredits">De: Bernardita Jesús y Braulio Figueroa<br>Para: Taller Visualización Interactiva</p>
+    <p id="renderCredits"><strong>Visualización para:</strong><br>Taller Visualización Interactiva<br>invierno 2026<br><br><strong>Proyecto de:</strong><br>Bernardita Jesús y Braulio Figueroa</p>
     <div class="mode-row">
       <button id="modeWeekly" class="mode-btn">Visualización<br>semanal</button>
       <button id="modeMonthly" class="mode-btn active">Visualización<br>mensual</button>
@@ -1024,7 +1014,7 @@
 
     <div class="symbol-row">
       <p class="row-title">Sentimiento evocado</p>
-      <p class="legend-note">Aquel sentimiento que predomina en la pulsión por hacer poesía.</p>
+      <p class="legend-note">Aquel sentimiento que predomina en el impulso por hacer poesía.</p>
       <div class="sym-opt-row">
         <svg class="sym-hit" data-var="sentimiento:lisa" width="44" height="18" viewBox="0 0 44 18">
           <rect x="0" y="0" width="44" height="18" rx="8" fill="transparent"/>
@@ -1042,8 +1032,8 @@
     </div>
 
     <div class="symbol-row">
-      <p class="row-title">Magnitud de la pulsión</p>
-      <p class="legend-note">La magnitud corresponde a la intensidad o relevancia de la pulsión por hacer poesía.</p>
+      <p class="row-title">Magnitud del impulso</p>
+      <p class="legend-note">La magnitud corresponde a la intensidad o relevancia del impulso por hacer poesía.</p>
       <div class="sym-opt-row">
         <svg class="sym-hit" data-var="magnitud:0" width="44" height="18" viewBox="0 0 44 18">
           <rect x="0" y="0" width="44" height="18" rx="8" fill="transparent"/>
@@ -1110,10 +1100,6 @@
   <svg width="17" height="17" viewBox="0 0 17 17"><rect x="2" y="2" width="13" height="13" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
 </button>
 
-
-<!-- volver a la pantalla de inicio del cuadrado (fijo arriba a la derecha,
-     fuera del cuadrado). Sólo aparece cuando ya se entró a una visualización. -->
-<button id="homeBtn" type="button" title="Volver al inicio" aria-label="Volver al inicio">↩ Inicio</button>
 
 </div><!-- /#stage -->
 
@@ -1384,8 +1370,8 @@ let viewMode = "mensual";
 const renderState = { started: false, currentWeek: 0, weekStartTime: 0, monthStartTime: 0, branchStartTime: 0 };
 let branchAppear = new Map();
 // stub: ya no existe el panel de video que reproducía las semanas día a día,
-// pero drawMonthly/setMode/homeBtn siguen consultando window.weekPlay --
-// queda inactivo (.active siempre false) para que ese código no rompa.
+// pero drawMonthly/setMode siguen consultando window.weekPlay -- queda
+// inactivo (.active siempre false) para que ese código no rompa.
 window.weekPlay = { active:false, reset(){} };
 
 function startRender(){
@@ -1430,22 +1416,6 @@ function setMode(mode){
 }
 modeWeeklyBtn.addEventListener("click", ()=> setMode("semanal"));
 modeMonthlyBtn.addEventListener("click", ()=> setMode("mensual"));
-
-// "Volver al inicio": vuelve a la pantalla de inicio del cuadrado y deja todo
-// en limpio (reproducción de semanas, filtros de día/semana, crecimiento).
-document.getElementById("homeBtn").addEventListener("click", ()=>{
-  if(window.weekPlay && window.weekPlay.reset) window.weekPlay.reset();
-  selectedDays.clear();
-  selectedWeeks.clear();
-  selectedVars.clear();
-  document.querySelectorAll(".day-row.selected").forEach(r=> r.classList.remove("selected"));
-  document.querySelectorAll(".sym-hit.on").forEach(o=> o.classList.remove("on"));
-  renderState.started = false;
-  branchAppear = new Map();
-  document.body.classList.remove("square-monthly");
-  toSquareMode();          // saca .square-viz y devuelve título/bajada al inicio
-  if(window.recomputePlotLayout) window.recomputePlotLayout();
-});
 
 /* ---------------------------------------------------------------
    MODO CUADRADO — mueve los mismos elementos del header/barra lateral/
@@ -1575,7 +1545,11 @@ new p5((p)=>{
       if(document.body.classList.contains("square-mode")){
         toRectMode();
       } else {
+        // se eliminó la pantalla de inicio del cuadrado (título/bajada +
+        // elegir semanal/mensual): al cambiar a formato cuadrado se entra
+        // directo a la visualización (árbol + simbología).
         toSquareMode();
+        setMode("mensual");
       }
       const goingSquare = document.body.classList.contains("square-mode");
       formatBtn.classList.toggle("active", goingSquare);
@@ -1619,9 +1593,9 @@ new p5((p)=>{
       // reproduce el offset que tenía el centro de ese h2 respecto al borde de
       // la columna, así la grilla no se mueve.
       const legendRect = symbolLegendEl.getBoundingClientRect();
-      const gridShiftDown = 94; // baja la grilla completa manteniendo la distancia entre líneas
+      const gridShiftDown = 118; // baja la grilla completa manteniendo la distancia entre líneas
       const rowSpacingTighten = 95; // sube plotBottom para juntar un poco las líneas de las horas (23:00 queda fijo) -- un poco más que antes para que el árbol quede levemente más bajo
-      const topSpacingTighten = 20; // baja SÓLO la línea de arriba (23:00) para juntar las horas -- plotBottom (07:00) no se toca, ya quedó bien
+      const topSpacingTighten = 10; // baja SÓLO la línea de arriba (23:00) para juntar las horas -- plotBottom (07:00) no se toca, ya quedó bien. Se bajó de 20 para dar más aire entre las líneas de hora.
       // el Math.max evita que la primera línea (23:00) se meta debajo de la
       // franja de título + pregunta / quede cortada arriba.
       plotTop = Math.max(34, legendRect.top + 23 - canvasRect.top - 44 + gridShiftDown + topSpacingTighten);
@@ -1773,8 +1747,8 @@ new p5((p)=>{
     // en cuadrado la línea no entra en la franja transparente (0..SQ_X_PAD) y
     // además se recorta un poco más por izquierda (+34) para que no se extienda
     // tanto; el tronco sigue centrado según su propio cálculo en drawMonthly.
-    const lineLeft = isSquare ? Math.max(plotAreaLeft, SQ_X_PAD) + 34 : plotLeft + 60;
-    const lineRight = isSquare ? plotAreaRight : plotRight - 60;
+    const lineLeft = isSquare ? Math.max(plotAreaLeft, SQ_X_PAD) + 34 : plotLeft + 25;
+    const lineRight = isSquare ? plotAreaRight : plotRight - 40;
     // labelX ya no depende de lineLeft -- así se puede mover la línea sola
     // sin arrastrar las horas (quedó fijo en la posición que tenía cuando
     // lineLeft todavía era plotLeft+15: (plotLeft+15) - textWidth - 36).
@@ -1822,6 +1796,19 @@ new p5((p)=>{
     }
 
     const growYs = weekProgress.map(prog => p.lerp(plotBottom, plotTop, prog));
+
+    // estado .on/relleno de los botones "Semana 1/2/3": drawMonthly ya los
+    // sincronizaba con su propio progreso, pero acá (drawWeekly, 3 troncos)
+    // nunca se tocaban -- quedaban con el valor que hubieran dejado en el
+    // último modo mensual, por eso un botón podía verse ya marcado/relleno
+    // antes de que ESE tronco/sus ramas realmente empezaran a crecer.
+    const manualWeeksBtn = weekManual();
+    for(let b = 0; b < weekBtnEls.length; b++){
+      const fill = manualWeeksBtn ? (selectedWeeks.has(b + 1) ? 1 : 0) : (weekProgress[b] || 0);
+      const on = manualWeeksBtn ? selectedWeeks.has(b + 1) : fill >= 1;
+      weekBtnEls[b].classList.toggle("on", on);
+      weekBtnEls[b].style.setProperty("--fill", (fill * 100) + "%");
+    }
 
     trunkXs.forEach((tx, i)=>{
       if(weekProgress[i] > 0) drawTrunk(tx, growYs[i], 1);
@@ -1962,7 +1949,11 @@ new p5((p)=>{
   // otras. Amplitud: fija por rama.
   function renderBranches(visible, now, trunkScale){
     const swayMap = trunkScale === 2 ? SWAY_MONTHLY : SWAY_WEEKLY;
-    visible.forEach(v=>{
+    // las largas se dibujan primero (quedan abajo, en el fondo) y las cortas
+    // al final (quedan arriba, no tapadas por una larga que pase por encima).
+    // slice() para no reordenar el array original.
+    const order = visible.slice().sort((a, b)=> (a.e.magnitud ? 0 : 1) - (b.e.magnitud ? 0 : 1));
+    order.forEach(v=>{
       if(!branchAppear.has(v.i)) branchAppear.set(v.i, now);
       const age = now - branchAppear.get(v.i);
       // easeInOutQuad arranca despacio y se nota mejor el crecimiento.
@@ -1987,30 +1978,59 @@ new p5((p)=>{
       baseLen = Math.min(153, sectionW * 0.151);
     } else if(isSquare){
       const sectionW = (plotAreaRight - plotAreaLeft) / 3;
-      baseLen = Math.min(65, sectionW * 0.268);
+      baseLen = Math.min(46, sectionW * 0.19);
     } else {
       const sectionW = (plotRight - plotLeft) / 3;
-      baseLen = Math.min(70, sectionW * 0.28);
+      baseLen = Math.min(76, sectionW * 0.3);
     }
     // largo según magnitud, por vista (un poco más largas, tanto cortas
     // como largas, que antes):
     //   larga (magnitud): x2.3 web · x1.86 cuadrado semanal · x1.5 cuadrado mensual
-    //   corta (sin magnitud): x1.0 web · x0.68 cuadrado semanal · x0.9 cuadrado mensual
-    const magFactor   = isSquare ? (isMonthly ? 1.5 : 1.86) : 2.3;
-    const shortFactor = isSquare ? (isMonthly ? 0.9 : 0.68) : 1.0;
+    //   corta (sin magnitud): x1.0 web · mitad de la larga en cuadrado semanal (x0.93) · x0.9 cuadrado mensual
+    const magFactor   = isSquare ? (isMonthly ? 1.5 : 1.86) : 2.5;
+    const shortFactor = isSquare ? (isMonthly ? 0.9 : magFactor / 24) : 1.15;
     const fullLen = baseLen * (e.magnitud ? magFactor : shortFactor);
     const len = fullLen * growFactor;
     const alpha = 235 * growFactor;
-    const upwardSlope = 0.32; // how steeply branches climb as they extend outward
+    // pendiente chata (antes más empinada solo en cuadrado): con ramas largas
+    // + curva + vaivén, una pendiente muy pronunciada hacía que ramas de horas
+    // vecinas se metieran una en el carril de la otra
+    const upwardSlope = 0.22;
     const isWavy = e.sentimiento < 0.5; // malo -> ondulada, bueno -> lisa
     // en formato cuadrado la ondulada es más suave pero con más repeticiones
-    const amp = isWavy ? (isSquare ? 5 : 6) : 0;
-    const freq = isSquare ? 0.5 : 0.3;
+    const amp = isWavy ? (isSquare ? 4 : 6) : 0;
+    const freq = isSquare ? 0.35 : 0.3;
+    // además de la onda (ramas "onduladas"), TODAS las ramas ganan un arqueo
+    // suave hacia arriba a medida que se alejan del tronco -- así ni las
+    // "lisas" quedan como una línea recta. El vaivén (wind, más abajo) ya las
+    // hace bajar un poco en parte del ciclo, así que no queda siempre
+    // rígidamente curvada para el mismo lado.
+    const curveBend = 13;
 
     // wind sway — fase y amplitud fijas por rama (ver renderBranches), así no
-    // hay saltos al aparecer ramas nuevas
+    // hay saltos al aparecer ramas nuevas. Se limita al largo de la rama: si
+    // no, las ramas cortas se verían igual de "grandes" que las largas porque
+    // el vaivén en la punta no se achicaba con ellas.
+    const effectiveWindAmp = Math.min(windAmp * 1.75, len * 0.6);
     const t0 = performance.now() * 0.0013;
-    const wind = Math.sin(t0 + swayPhase) * windAmp;
+    // además de la fase por grupo (swayPhase, ver buildSway), se le suma un
+    // jitter extra derivado de la misma fase: así ramas de horas vecinas
+    // (grupos distintos) que por casualidad caían en fases parecidas dejan de
+    // moverse casi juntas / pegadas una al lado de la otra.
+    const phaseJitter = Math.sin(swayPhase * 7.31) * 1.1;
+    // además de arrancar en fases distintas, cada rama oscila a una velocidad
+    // levemente distinta: dos ramas que arrancan parecidas se van
+    // desalineando con el tiempo en vez de quedar sincronizadas siempre
+    const speedJitter = (0.8 + Math.abs(Math.sin(swayPhase * 5.17)) * 0.4) * 0.75;
+    // se suma un segundo armónico (más rápido, más chico) al vaivén principal
+    // para que el movimiento no se vea como un metrónomo perfecto
+    const rawWave = Math.sin(t0 * speedJitter + swayPhase + phaseJitter) * 0.7
+      + Math.sin(t0 * 1.9 * speedJitter + swayPhase * 2.3 + phaseJitter) * 0.3;
+    // wind > 0 empuja la rama hacia ABAJO (contrario al arqueo, que es hacia
+    // arriba) -- se lo acentúa más que el impulso hacia arriba, para que se
+    // note más el "rebote" flectando para abajo que el regreso a la curva.
+    const windShaped = rawWave > 0 ? rawWave * 1.6 : rawWave;
+    const wind = windShaped * effectiveWindAmp;
 
     // start exactly at the trunk's tapered surface, not its center line
     const halfWidth = trunkHalfWidthAt(y, trunkScale);
@@ -2018,25 +2038,39 @@ new p5((p)=>{
 
     const col = p.color(DAY_COLORS[e.day]);
     col.setAlpha(alpha);
-    p.stroke(col);
     p.strokeWeight(isSquare ? 1.5 : 2.4); // línea más fina en formato cuadrado
     p.noFill();
     // segmentación más fina (más trozos) en formato cuadrado
     p.drawingContext.setLineDash(e.estimulo ? (isSquare ? [4, 4] : [7, 6]) : []);
 
     const steps = Math.max(10, Math.round(len / (isSquare ? 1.5 : 2)));
-    p.beginShape();
+    // el primer tercio de la rama degrada del café del tronco a su color de
+    // día -- ese tramo se dibuja como segmentos sueltos (cada uno con su
+    // propio color interpolado) en vez de un solo beginShape/endShape
+    const GRADIENT_SHARE = 1/3;
+    const trunkCol = p.color(43, 38, 32);
+    trunkCol.setAlpha(alpha);
+    let prevPx, prevPy;
     for(let s = 0; s <= steps; s++){
       const t = (len / steps) * s;
       const swayShare = len > 0 ? t / len : 0;
       const px = startX + dir * t;
-      const py = y - t * upwardSlope + Math.sin(t * freq) * amp + wind * swayShare;
-      p.vertex(px, py);
+      let py = y - t * upwardSlope + Math.sin(t * freq) * amp + wind * swayShare - Math.pow(swayShare, 1.6) * curveBend;
+      // el arqueo + el vaivén no deben empujar ninguna rama fuera del canvas
+      // (si no, la punta se corta contra el borde y "desaparece")
+      py = p.constrain(py, 6, p.height - 6);
+      if(s > 0){
+        const blend = p.constrain(swayShare / GRADIENT_SHARE, 0, 1);
+        p.stroke(p.lerpColor(trunkCol, col, blend));
+        p.line(prevPx, prevPy, px, py);
+      }
+      prevPx = px; prevPy = py;
     }
-    p.endShape();
     p.drawingContext.setLineDash([]);
 
-    const dot = p.color(DAY_COLORS[e.day]);
+    // el punto de arranque es del mismo café del tronco (arranca el degradé
+    // ahí mismo)
+    const dot = p.color(43, 38, 32);
     dot.setAlpha(235 * growFactor);
     p.noStroke();
     p.fill(dot);

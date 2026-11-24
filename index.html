@@ -2051,6 +2051,12 @@ new p5((p)=>{
     const trunkCol = p.color(43, 38, 32);
     trunkCol.setAlpha(alpha);
     let prevPx, prevPy;
+    // cada tramo es una línea aparte (por el degradé), y el patrón de
+    // segmentado se reinicia en cada p.line(): como los tramos miden ~2px
+    // (menos que el primer trazo del patrón) la rama se veía continua. Se
+    // arrastra el largo acumulado como lineDashOffset para que el patrón
+    // siga a lo largo de toda la rama.
+    let dashTravel = 0;
     for(let s = 0; s <= steps; s++){
       const t = (len / steps) * s;
       const swayShare = len > 0 ? t / len : 0;
@@ -2062,11 +2068,14 @@ new p5((p)=>{
       if(s > 0){
         const blend = p.constrain(swayShare / GRADIENT_SHARE, 0, 1);
         p.stroke(p.lerpColor(trunkCol, col, blend));
+        p.drawingContext.lineDashOffset = dashTravel;
         p.line(prevPx, prevPy, px, py);
+        dashTravel += Math.hypot(px - prevPx, py - prevPy);
       }
       prevPx = px; prevPy = py;
     }
     p.drawingContext.setLineDash([]);
+    p.drawingContext.lineDashOffset = 0;
 
     // el punto de arranque es del mismo café del tronco (arranca el degradé
     // ahí mismo)
